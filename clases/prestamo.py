@@ -1,7 +1,8 @@
 from datetime import datetime, timedelta
 
 class Prestamo:
-    def __init__(self, socio, dias, detalle):
+    def __init__(self, id, socio, dias):
+        self.id = id
         self.socio = socio
         self.tiempoPrestamo = dias
         self.detallePrestamo = [] #Listas con objetos detalle de prestamos
