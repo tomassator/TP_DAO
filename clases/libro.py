@@ -4,8 +4,9 @@ from extraviado import Extraviado
 
 
 class Libro:
-    def __init__(self, codigo, titulo, descripcion, preciorep):
-        self.codigo = codigo
+    def __init__(self, id, codigo, titulo, descripcion, preciorep):
+        self.id = id            #id de cada libro por separado
+        self.codigo = codigo    #ISBN, codigo que identifica cada titulo       
         self.titulo = titulo
         self.descripcion = descripcion
         self.precioReposicion = preciorep
