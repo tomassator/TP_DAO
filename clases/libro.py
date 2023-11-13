@@ -41,6 +41,12 @@ class Libro:
 
 
     #Getters y setters
+    def get_id(self):
+        return self.id
+
+    def set_id(self, nuevo_id):
+        self.id = nuevo_id
+        
     def get_codigo(self):
         return self.codigo
 

@@ -8,6 +8,7 @@ class Prestamo:
         self.detallePrestamo = [] #Listas con objetos detalle de prestamos
         self.fecha_prestamo = datetime.now()
         self.fecha_pactada_devolucion = self.fecha_prestamo + timedelta(days=self.tiempoPrestamo)
+        self.fecha_devolucion = None
 
 
     #Cargamos todos los libros prestados al prestamo
@@ -17,6 +18,12 @@ class Prestamo:
 
 
     #Getters y Setters
+    def get_id(self):
+        return self.id
+
+    def set_id(self, nuevo_id):
+        self.id = nuevo_id
+    
     def get_socio(self):
         return self.socio
 
@@ -40,3 +47,9 @@ class Prestamo:
 
     def set_fecha_prestamo(self, nueva_fecha):
         self.fecha_prestamo = nueva_fecha
+        
+    def get_fecha_devolucion(self):
+        return self.fecha_devolucion
+    
+    def set_fecha_devolucion(self, nueva_fecha):
+        self.fecha_devolucion = nueva_fecha
