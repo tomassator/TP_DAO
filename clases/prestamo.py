@@ -11,10 +11,27 @@ class Prestamo:
         self.fecha_devolucion = None
 
 
+    #Registracion de prestamos y devoluciones
+    def insertar_prestamo(self, conexion):
+        cursor = conexion.cursor()
+        cursor.execute("INSERT INTO prestamo (id, tiempoPrestamo, fecha_prestamo, fecha_pactada_devolucion, fecha_devolucion, id_socio) VALUES (?, ?, ?)",
+                       (self.get_id(), self.get_tiempoPrestamo(), self.get_fecha_prestamo(), self.get_fecha_pactada_devolucion(), self.get_fecha_devolucion(), self.socio.get_nro_socio()))
+        conexion.commit()
+        conexion.close()
+
+    def actualizar_prestamo(self,conexion):
+        cursor = conexion.cursor()
+        cursor.execute("UPDATE prestamo  SET tiempoPrestamo = ?, fecha_prestamo = ?, fecha_pactada_devolucion = ?, fecha_devolucion = ?, id_socio = ? WHERE id = ?",
+                       (self.get_tiempoPrestamo(), self.get_fecha_prestamo(), self.get_fecha_pactada_devolucion(), self.get_fecha_devolucion(), self.socio.get_nro_socio(), self.get_id()))
+        conexion.commit()
+        conexion.close()
+
+
     #Cargamos todos los libros prestados al prestamo
     def cargar_prestamo(self, detalles):
         for det in detalles:
             self.detallePrestamo.append(det)
+            det.set_id_prestamo(self.get_id())
 
 
     #Getters y Setters
@@ -53,3 +70,9 @@ class Prestamo:
     
     def set_fecha_devolucion(self, nueva_fecha):
         self.fecha_devolucion = nueva_fecha
+
+    def get_fecha_pactada_devolucion(self):
+        return self.fecha_pactada_devolucion
+
+    def set_fecha_pactada_devolucion(self, fecha):
+        self.fecha_pactada_devolucion = fecha

@@ -5,6 +5,26 @@ from prestado import Prestado
 from extraviado import Extraviado
 from datetime import datetime, timedelta
 import sqlite3
+from gestor import Gestor
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 #libro1 = Libro(123,"asd","desc",200)
 #print(libro1.get_estado())
@@ -16,7 +36,7 @@ import sqlite3
 
 
 #Ejemplo insertar un socio nuevo
-
+'''
 def insertar_socio(conexion, socio):
     cursor = conexion.cursor()
     cursor.execute("INSERT INTO socios (nro_socio, nombre, apellido) VALUES (?, ?, ?)",
@@ -39,18 +59,19 @@ def eliminar_socio(conexion, nro_socio):
     print(f"Socio con número {nro_socio} eliminado correctamente.")
     
      
-conexion = sqlite3.connect("C:\\Users\\User\\OneDrive\\Documentos\\Facultad\\2023\\DAO\\Tp\\TP_DAO\\clases\\biblioteca.db")
+conexion = sqlite3.connect("biblioteca.db")
+'''
 
 #nro = int(input("Ingrese numero socio: "))
 #nombre = input("Ingrese nombre socio: ")
 #apellido = input("Ingrese apellido socio: ")
 #nro_eliminado = int(input("Ingrese el nro de socio que desea eliminar: "))
 
-socio_actualizado = Socio(60, "Diego", "Maradona")
+#socio_actualizado = Socio(60, "Diego", "Maradona")
 
 #socio1 = Socio(nro, nombre, apellido)
 #insertar_socio(conexion, socio1)
 #eliminar_socio(conexion, nro_eliminado)
-actualizar_socio(conexion, socio_actualizado)
+#actualizar_socio(conexion, socio_actualizado)
 
-conexion.close()
+#conexion.close()

@@ -8,6 +8,15 @@ class Disponible(Estado):
         self.nombre = "Disponible"
         self.contexto = None
 
+    def get_id_estado(self):
+        return self.id_estado
+
+    def set_id_estado(self,id):
+        self.id_estado = id
+
+    def set_nombre(self, nombre):
+        self.nombre = nombre
+
     def get_nombre(self):
         return self.nombre
 

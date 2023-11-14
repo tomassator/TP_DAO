@@ -12,9 +12,33 @@ class Libro:
         self.precioReposicion = preciorep
         self.estado = Disponible()
 
+    #ABM
+    def insertar_libro(self, conexion):
+        cursor = conexion.cursor()
+        cursor.execute("INSERT INTO libros (id, codigo, titulo, descripcion, precioReposicion, id_estado) VALUES (?, ?, ?)",
+                       (self.get_id(), self.get_codigo(), self.get_titulo(), self.get_descripcion(), self.get_precioReposicion(), self.estado.get_id_estado()))
+        conexion.commit()
+        conexion.close()
+
+    def actualizar_libro(self,conexion):
+        cursor = conexion.cursor()
+        cursor.execute("UPDATE libros SET codigo = ?, titulo = ?, descripcion = ?,precioReposicion = ?,id_estado = ? WHERE id = ?",
+                       (self.get_codigo(), self.get_titulo(), self.get_descripcion(), self.get_precioReposicion(), self.estado.get_id_estado(), self.get_id()))
+        conexion.commit()
+        conexion.close()
+
+
+    def eliminar_libro(self,conexion):
+        cursor = conexion.cursor()
+        cursor.execute("DELETE FROM libros WHERE id = ?", (self.get_id()))
+        conexion.commit()
+        conexion.close()
+
+
+
+
 
     #Definimos un metodo para cada cambio de estado
-
     def cambiar_a_disponible(self):
         if not isinstance(self.estado, Disponible):
             pass
