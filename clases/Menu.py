@@ -1,4 +1,5 @@
 import tkinter as tk
+from gestor import Gestor
 from tkinter import messagebox
 from AdministrarLibros import LibroManager, InterfazABM
 
@@ -40,7 +41,8 @@ class MenuPrincipal:
     def administracion_libros(self):
         # Abrir la ventana de administración de libros
         root_libros = tk.Tk()
-        libro_manager = LibroManager()
+        gestor = Gestor()
+        libro_manager = LibroManager(gestor)
         interfaz_libros = InterfazABM(root_libros, libro_manager)
         root_libros.mainloop()
 

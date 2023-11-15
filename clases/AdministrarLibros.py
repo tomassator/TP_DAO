@@ -3,22 +3,12 @@ from tkinter import ttk, messagebox
 from gestor import Gestor
 from libro import Libro
 
-gestor = Gestor()
-
 class LibroManager:
-    def __init__(self):
-        self.libros = []
+    def __init__(self, gestor):
+        self.gestor = gestor
 
-    def agregar_libro(self, libro):
-        existing_libro = self.buscar_libro(libro.codigo)
-        if existing_libro:
-            # Modificar el libro existente
-            existing_libro.titulo = libro.titulo
-            existing_libro.descripcion = libro.descripcion
-            existing_libro.precioReposicion = libro.precioReposicion
-        else:
-            # Agregar un nuevo libro
-            self.libros.append(libro)
+    def agregar_libro(self, codigo, titulo, descripcion, precioReposicion):
+        self.gestor.agregar_libro(codigo,titulo,descripcion,precioReposicion)
 
     def buscar_libro(self, codigo):
         for libro in self.libros:
@@ -26,12 +16,13 @@ class LibroManager:
                 return libro
         return None
 
-    def eliminar_libro(self, codigo):
-        libro = self.buscar_libro(codigo)
-        if libro:
-            self.libros.remove(libro)
-            return True
-        return False
+    def eliminar_libro(self, id):
+        self.gestor.eliminar_libro(id)
+        return True
+    
+    def consultar_libros(self):
+        return self.gestor.obtener_libros()
+
 
 class InterfazABM:
     def __init__(self, root, libro_manager):
@@ -39,6 +30,7 @@ class InterfazABM:
         self.libro_manager = libro_manager
 
         self.root.title("ABM de Libros")
+
 
         # Frame para los campos de entrada
         self.input_frame = tk.Frame(root)
@@ -74,8 +66,8 @@ class InterfazABM:
         self.grid_frame = tk.Frame(root)
         self.grid_frame.grid(row=1, column=0, padx=10, pady=5)
 
-        self.libros_treeview = ttk.Treeview(self.grid_frame, columns=("Código", "Título", "Descripción", "Precio Reposición"))
-        self.libros_treeview.heading("#0", text="ID")
+        self.libros_treeview = ttk.Treeview(self.grid_frame, columns=("ID","Código", "Título", "Descripción", "Precio Reposición"))
+        self.libros_treeview.heading("ID", text="ID")
         self.libros_treeview.heading("Código", text="Código")
         self.libros_treeview.heading("Título", text="Título")
         self.libros_treeview.heading("Descripción", text="Descripción")
@@ -84,9 +76,9 @@ class InterfazABM:
         self.libros_treeview.grid(row=0, column=0, padx=10, pady=5)
 
         # Datos de libros hardcodeados para prueba
-        libro_manager.agregar_libro(Libro(1,"1234567890", "Libro 1", "Descripción 1", 19.99))
-        libro_manager.agregar_libro(Libro(2,"9876543210", "Libro 2", "Descripción 2", 29.99))
-        libro_manager.agregar_libro(Libro(3,"1112223334", "Libro 3", "Descripción 3", 39.99))
+        # libro_manager.agregar_libro(Libro(1,"1234567890", "Libro 1", "Descripción 1", 19.99))
+        # libro_manager.agregar_libro(Libro(2,"9876543210", "Libro 2", "Descripción 2", 29.99))
+        # libro_manager.agregar_libro(Libro(3,"1112223334", "Libro 3", "Descripción 3", 39.99))
 
         # Actualizar la grilla con los libros hardcodeados
         self.cargar_libros_en_grilla()
@@ -98,8 +90,7 @@ class InterfazABM:
         precioReposicion = self.precio_reposicion_entry.get()
 
         if codigo and titulo and descripcion and precioReposicion:
-            nuevo_libro = Libro(codigo, titulo, descripcion, precioReposicion)
-            self.libro_manager.agregar_libro(nuevo_libro)
+            self.libro_manager.agregar_libro(codigo, titulo, descripcion, precioReposicion)
             self.cargar_libros_en_grilla()
             messagebox.showinfo("Éxito", "Libro agregado/modificado correctamente.")
             self.limpiar_campos()
@@ -111,8 +102,8 @@ class InterfazABM:
         if item:
             libro_seleccionado = self.libros_treeview.item(item[0], "values")
             if libro_seleccionado:
-                codigo_libro = libro_seleccionado[0]
-                if self.libro_manager.eliminar_libro(codigo_libro):
+                id = libro_seleccionado[0]
+                if self.libro_manager.eliminar_libro(id):
                     self.cargar_libros_en_grilla()
                     messagebox.showinfo("Éxito", "Libro eliminado correctamente.")
                     self.limpiar_campos()
@@ -129,24 +120,23 @@ class InterfazABM:
             self.libros_treeview.delete(item)
 
         # Cargar libros en la grilla
-        for i, libro in enumerate(self.libro_manager.libros):
-            self.libros_treeview.insert("", i, text=str(i + 1), values=(libro.codigo, libro.titulo, libro.descripcion, libro.precioReposicion))
+        for i, libro in enumerate(self.libro_manager.consultar_libros()):
+            self.libros_treeview.insert("", i, values=(libro.id, libro.codigo, libro.titulo, libro.descripcion, libro.precioReposicion))
 
     def cargar_datos_seleccionados(self, event):
         item = self.libros_treeview.selection()
         if item:
             libro_seleccionado = self.libros_treeview.item(item[0], "values")
-
             if libro_seleccionado:
                 self.codigo_entry.delete(0, tk.END)
                 self.titulo_entry.delete(0, tk.END)
                 self.descripcion_entry.delete(0, tk.END)
                 self.precio_reposicion_entry.delete(0, tk.END)
 
-                self.codigo_entry.insert(0, libro_seleccionado[0])
-                self.titulo_entry.insert(0, libro_seleccionado[1])
-                self.descripcion_entry.insert(0, libro_seleccionado[2])
-                self.precio_reposicion_entry.insert(0, libro_seleccionado[3])
+                self.codigo_entry.insert(0, libro_seleccionado[1])
+                self.titulo_entry.insert(0, libro_seleccionado[2])
+                self.descripcion_entry.insert(0, libro_seleccionado[3])
+                self.precio_reposicion_entry.insert(0, libro_seleccionado[4])
 
     def limpiar_campos(self):
         self.codigo_entry.delete(0, tk.END)
