@@ -8,6 +8,17 @@ import sqlite3
 from gestor import Gestor
 
 
+conexion = sqlite3.connect("biblioteca.db")
+cursor = conexion.cursor()
+
+libro = Libro(1,11,11111,1355)
+libro.insertar_libro(conexion)
+
+# libros = Libro.obtener_libros()
+
+
+print()
+
 
 
 
@@ -41,7 +52,7 @@ def insertar_socio(conexion, socio):
     cursor = conexion.cursor()
     cursor.execute("INSERT INTO socios (nro_socio, nombre, apellido) VALUES (?, ?, ?)",
                (socio.get_nro_socio(), socio.get_nombre(), socio.get_apellido()))
-    
+
     conexion.commit()
 
 def actualizar_socio(conexion, socio):
@@ -50,15 +61,15 @@ def actualizar_socio(conexion, socio):
                     (socio.get_nombre(), socio.get_apellido(), socio.get_nro_socio()))
     conexion.commit()
     print(f"Información del socio con número {socio.get_nro_socio()} actualizada correctamente.")
-    
+
 
 def eliminar_socio(conexion, nro_socio):
     cursor = conexion.cursor()
     cursor.execute("DELETE FROM socios WHERE nro_socio = ?", (nro_socio,))
     conexion.commit()
     print(f"Socio con número {nro_socio} eliminado correctamente.")
-    
-     
+
+
 conexion = sqlite3.connect("biblioteca.db")
 '''
 

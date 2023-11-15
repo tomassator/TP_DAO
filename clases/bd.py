@@ -6,7 +6,7 @@ cursor = conexion.cursor()
 # Tabla Libros
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS libros (
-                id INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 codigo INTEGER,
                 titulo TEXT NOT NULL,
                 descripcion TEXT,
@@ -36,7 +36,7 @@ cursor.execute('''
 #Tabla Prestamo
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS prestamo (
-                id INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 tiempoPrestamo INTEGER NOT NULL,
                 fecha_prestamo DATETIME,
                 fecha_pactada_devolucion DATETIME,
@@ -53,7 +53,7 @@ cursor.execute('''
 #Tabla Detalle Prestamo
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS detalle_prestamo (
-                id_detalle_prestamo INTEGER PRIMARY KEY,
+                id_detalle_prestamo INTEGER PRIMARY KEY AUTOINCREMENT,
                 id_prestamo INTEGER,
                 id_libro INTEGER,
                 FOREIGN KEY (id_prestamo) REFERENCES prestamo (id),
@@ -68,7 +68,7 @@ cursor.execute('''
 #Tabla Estado 
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS estado (
-                id INTEGER PRIMARY KEY,
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
                 nombre TEXT NOT NULL)
             ''')
 
@@ -76,5 +76,6 @@ cursor.execute('''
 #cursor.execute("INSERT INTO estado (id, nombre) VALUES (?,?)", (1,"Disponible",))
 
 conexion.commit()
-conexion.close()
 cursor.close()
+conexion.close()
+

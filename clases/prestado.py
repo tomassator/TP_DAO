@@ -1,4 +1,4 @@
-from clases.estado import Estado
+from estado import Estado
 
 
 class Prestado(Estado):

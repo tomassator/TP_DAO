@@ -1,22 +1,21 @@
-from clases.disponible import Disponible
-from clases.prestado import Prestado
-from clases.extraviado import Extraviado
+from disponible import Disponible
+from prestado import Prestado
+from extraviado import Extraviado
 
 
 class Libro:
-    def __init__(self, id, codigo, titulo, descripcion, preciorep):
-        self.id = id            #id de cada libro por separado
+    def __init__(self, codigo, titulo, descripcion, preciorep, estado=Disponible()):
         self.codigo = codigo    #ISBN, codigo que identifica cada titulo       
         self.titulo = titulo
         self.descripcion = descripcion
         self.precioReposicion = preciorep
-        self.estado = Disponible()
+        self.estado = estado
 
     #ABM
     def insertar_libro(self, conexion):
         cursor = conexion.cursor()
-        cursor.execute("INSERT INTO libros (id, codigo, titulo, descripcion, precioReposicion, id_estado) VALUES (?, ?, ?)",
-                       (self.get_id(), self.get_codigo(), self.get_titulo(), self.get_descripcion(), self.get_precioReposicion(), self.estado.get_id_estado()))
+        cursor.execute("INSERT INTO libros (codigo, titulo, descripcion, precioReposicion, id_estado) VALUES (?, ?, ?, ?, ?)",
+                       (self.get_codigo(), self.get_titulo(), self.get_descripcion(), self.get_precioReposicion(), self.estado.get_id_estado()))
         conexion.commit()
         conexion.close()
 
@@ -33,6 +32,18 @@ class Libro:
         cursor.execute("DELETE FROM libros WHERE id = ?", (self.get_id()))
         conexion.commit()
         conexion.close()
+
+    @staticmethod
+    def obtener_libros(conexion):
+        cursor = conexion.cursor()
+        cursor.execute("SELECT * FROM libros")
+        resultados = cursor.fetchall()
+
+        libros = []
+        for fila in resultados:
+            libro = Libro(fila[0], fila[1],fila[2],fila[3],fila[4], fila[5])
+            libros.append(libro)
+        return libros
 
 
 

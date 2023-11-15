@@ -1,4 +1,4 @@
-from clases.estado import Estado
+from estado import Estado
 
 class Extraviado(Estado):
     def __init__(self):
