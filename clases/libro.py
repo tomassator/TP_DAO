@@ -28,7 +28,6 @@ class Libro:
         conexion.commit()
         cursor.close()
 
-
     def eliminar_libro(self,conexion):
         cursor = conexion.cursor()
         cursor.execute("DELETE FROM libros WHERE id = ?", (self.get_id()))

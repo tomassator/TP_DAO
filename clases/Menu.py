@@ -1,7 +1,7 @@
 import tkinter as tk
 from gestor import Gestor
 from tkinter import messagebox
-from AdministrarLibros import LibroManager, InterfazABM
+from AdministrarLibros import LibroManager, InterfazAdministrarLibros
 
 class MenuPrincipal:
     def __init__(self, root):
@@ -43,7 +43,7 @@ class MenuPrincipal:
         root_libros = tk.Tk()
         gestor = Gestor()
         libro_manager = LibroManager(gestor)
-        interfaz_libros = InterfazABM(root_libros, libro_manager)
+        interfaz_libros = InterfazAdministrarLibros(root_libros, libro_manager)
         root_libros.mainloop()
 
     def registro_prestamos(self):

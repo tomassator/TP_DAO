@@ -22,9 +22,13 @@ class Gestor:
     
     def eliminar_libro(self, id):
         cursor = self.conexion.cursor()
-        cursor.execute("DELETE FROM libros WHERE id = ?", (id))
+        cursor.execute("DELETE FROM libros WHERE id = ?", [id])
         self.conexion.commit()
         cursor.close()
+
+    def actualizar_libro(self, id, codigo, titulo, descripcion, precioReposicion):
+        libro = Libro(codigo, titulo, descripcion, precioReposicion, id=id)
+        libro.actualizar_libro(self.conexion)
 
 
 
