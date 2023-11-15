@@ -1,4 +1,4 @@
-from estado import Estado
+from clases.estado import Estado
 
 
 class Disponible(Estado):

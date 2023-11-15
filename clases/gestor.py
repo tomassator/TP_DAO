@@ -7,3 +7,6 @@ class Gestor:
         self.conexion = None
 
 
+
+    conexion = sqlite3.connect("biblioteca.db")
+

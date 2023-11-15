@@ -1,6 +1,6 @@
-from disponible import Disponible
-from prestado import Prestado
-from extraviado import Extraviado
+from clases.disponible import Disponible
+from clases.prestado import Prestado
+from clases.extraviado import Extraviado
 
 
 class Libro:
