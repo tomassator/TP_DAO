@@ -15,8 +15,8 @@ class ConexionSingleton:
     def conexion_commit(self):
         self.conexion.commit()
         
-    def cerrar_conexion(self):
-        self.conexion.close()
+    def cerrar_cursor(self):
+        self.obtener_cursor().close()
 
 
     

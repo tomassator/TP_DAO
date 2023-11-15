@@ -15,24 +15,24 @@ class Libro:
 
     #ABM
     def insertar_libro(self, conexion):
-        cursor = conexion.cursor()
+        cursor = conexion.obtener_cursor()
         cursor.execute("INSERT INTO libros (codigo, titulo, descripcion, precioReposicion, id_estado) VALUES (?, ?, ?, ?, ?)",
                        (self.get_codigo(), self.get_titulo(), self.get_descripcion(), self.get_precioReposicion(), self.estado.get_id_estado()))
-        conexion.commit()
-        cursor.close()
+        conexion.conexion_commit()
+        conexion.cerrar_cursor()
 
     def actualizar_libro(self,conexion):
-        cursor = conexion.cursor()
+        cursor = conexion.obtener_cursor()
         cursor.execute("UPDATE libros SET codigo = ?, titulo = ?, descripcion = ?,precioReposicion = ?,id_estado = ? WHERE id = ?",
                        (self.get_codigo(), self.get_titulo(), self.get_descripcion(), self.get_precioReposicion(), self.estado.get_id_estado(), self.get_id()))
-        conexion.commit()
-        cursor.close()
+        conexion.conexion_commit()
+        conexion.cerrar_cursor()
 
     def eliminar_libro(self,conexion):
-        cursor = conexion.cursor()
+        cursor = conexion.obtener_cursor()
         cursor.execute("DELETE FROM libros WHERE id = ?", (self.get_id()))
-        conexion.commit()
-        cursor.close()
+        conexion.conexion_commit()
+        conexion.cerrar_cursor()
 
 
     #Definimos un metodo para cada cambio de estado
