@@ -2,6 +2,8 @@ import tkinter as tk
 from gestor import Gestor
 from tkinter import messagebox
 from AdministrarLibros import LibroManager, InterfazAdministrarLibros
+from AdministrarSocios import SocioManager, InterfazAdministrarSocios
+from RegistrarPrestamos import PrestamoManager, InterfazRegistrarPrestamos
 
 class MenuPrincipal:
     def __init__(self, root):
@@ -35,11 +37,13 @@ class MenuPrincipal:
         btn_reportes.pack(pady=10)
 
     def administracion_socios(self):
-        # Lógica para la administración de socios
-        print("Administración de socios")
+        root_socios = tk.Tk()
+        gestor = Gestor()
+        socio_manager = SocioManager(gestor)
+        interfaz_socio = InterfazAdministrarSocios(root_socios, socio_manager)
+        root_socios.mainloop()
 
     def administracion_libros(self):
-        # Abrir la ventana de administración de libros
         root_libros = tk.Tk()
         gestor = Gestor()
         libro_manager = LibroManager(gestor)
@@ -47,8 +51,11 @@ class MenuPrincipal:
         root_libros.mainloop()
 
     def registro_prestamos(self):
-        # Lógica para la registración de préstamos y devoluciones
-        print("Registración de préstamos y devoluciones")
+        root_prestamos = tk.Tk()
+        gestor = Gestor()
+        prestamo_manager = PrestamoManager(gestor)
+        interfaz_prestamo = InterfazRegistrarPrestamos(root_prestamos, prestamo_manager)
+        root_prestamos.mainloop()
 
     def registro_libros_extraviados(self):
         # Lógica para la registración de libros extraviados

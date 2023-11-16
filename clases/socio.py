@@ -1,6 +1,3 @@
-
-
-
 class Socio:
     def __init__(self, nro_socio, nombre, apellido):
         self.nro_socio = nro_socio
@@ -10,25 +7,25 @@ class Socio:
 
     #ABM
     def insertar_socio(self, conexion):
-        cursor = conexion.cursor()
+        cursor = conexion.obtener_cursor()
         cursor.execute("INSERT INTO socios (nro_socio, nombre, apellido) VALUES (?, ?, ?)",
                        (self.get_nro_socio(), self.get_nombre(), self.get_apellido()))
-        conexion.commit()
-        conexion.close()
+        conexion.conexion_commit()
+        conexion.cerrar_cursor()
 
     def actualizar_socio(self,conexion):
-        cursor = conexion.cursor()
+        cursor = conexion.obtener_cursor()
         cursor.execute("UPDATE socios SET nombre = ?, apellido = ? WHERE nro_socio = ?",
                        (self.get_nombre(), self.get_apellido(), self.get_nro_socio()))
-        conexion.commit()
-        conexion.close()
+        conexion.conexion_commit()
+        conexion.cerrar_cursor()
         print(f"Información del socio con número {self.get_nro_socio()} actualizada correctamente.")
 
     def eliminar_socio(self,conexion):
-        cursor = conexion.cursor()
+        cursor = conexion.obtener_cursor()
         cursor.execute("DELETE FROM socios WHERE nro_socio = ?", (self.get_nro_socio()))
-        conexion.commit()
-        conexion.close()
+        conexion.conexion_commit()
+        conexion.cerrar_cursor()
         print(f"Socio con número {self.get_nro_socio()} eliminado correctamente.")
 
 
