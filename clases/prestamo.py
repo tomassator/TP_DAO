@@ -14,8 +14,8 @@ class Prestamo:
     #Registracion de prestamos y devoluciones
     def insertar_prestamo(self, conexion):
         cursor = conexion.cursor()
-        cursor.execute("INSERT INTO prestamo (id, tiempoPrestamo, fecha_prestamo, fecha_pactada_devolucion, fecha_devolucion, id_socio) VALUES (?, ?, ?)",
-                       (self.get_id(), self.get_tiempoPrestamo(), self.get_fecha_prestamo(), self.get_fecha_pactada_devolucion(), self.get_fecha_devolucion(), self.socio.get_nro_socio()))
+        cursor.execute("INSERT INTO prestamo (id, tiempoPrestamo, fecha_prestamo, fecha_pactada_devolucion, id_socio) VALUES (?, ?, ?)",
+                       (self.get_id(), self.get_tiempoPrestamo(), self.get_fecha_prestamo(), self.get_fecha_pactada_devolucion(), self.socio.get_nro_socio()))
         conexion.commit()
         conexion.close()
 
