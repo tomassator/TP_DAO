@@ -1,4 +1,6 @@
 from estado import Estado
+from prestado import Prestado
+from disponible import Disponible
 
 class Extraviado(Estado):
     def __init__(self):
@@ -10,13 +12,11 @@ class Extraviado(Estado):
         return self.nombre
 
     def cambiar_estado_disponible(self):
-        pass
+        return Disponible()
 
     def cambiar_estado_prestado(self):
-        return "Un libro extraviado no puede pasar a estado Prestado"
+        return None
 
     def cambiar_estado_extraviado(self):
-        pass
+        return Extraviado()
 
-    def cambiar_estado_demorado(self):
-        return "Un libro extraviado no puede pasar a estado Demorado"

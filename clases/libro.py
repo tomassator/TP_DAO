@@ -4,13 +4,14 @@ from extraviado import Extraviado
 
 
 class Libro:
-    def __init__(self, codigo, titulo, descripcion, preciorep, id=None, estado=Disponible()):
+    def __init__(self, codigo, titulo, descripcion, preciorep, id=None, estado=1):
         self.codigo = codigo    #ISBN, codigo que identifica cada titulo       
         self.titulo = titulo
         self.descripcion = descripcion
         self.precioReposicion = preciorep
         self.id = id
-        self.estado = estado
+        self.estado = None
+        self.set_estado(estado)
     
 
     #ABM
@@ -38,19 +39,19 @@ class Libro:
     #Definimos un metodo para cada cambio de estado
     def cambiar_a_disponible(self):
         if not isinstance(self.estado, Disponible):
-            pass
+            self.estado.cambiar_estado_disponible()
         else:
             return "El libro esta en estado Disponible"
 
     def cambiar_a_prestado(self):
         if not isinstance(self.estado, Prestado):
-            pass
+            self.estado.cambiar_estado_prestado()
         else:
             return "El libro esta en estado Prestado"
 
     def cambiar_a_extraviado(self):
         if not isinstance(self.estado, Extraviado):
-            pass
+            self.estado.cambiar_estado_extraviado()
         else:
             return "El libro esta en estado Extraviado"
 
@@ -96,4 +97,9 @@ class Libro:
         return self.estado.get_nombre()
 
     def set_estado(self, nuevo_estado):
-        self.estado = nuevo_estado
+        if nuevo_estado == 1:
+            self.estado = Disponible()
+        elif nuevo_estado == 2:
+            self.estado = Prestado()
+        elif nuevo_estado == 3:
+            self.estado = Extraviado()

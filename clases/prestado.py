@@ -1,4 +1,6 @@
 from estado import Estado
+from extraviado import Extraviado
+from disponible import Disponible
 
 
 class Prestado(Estado):
@@ -11,13 +13,11 @@ class Prestado(Estado):
         return self.nombre
 
     def cambiar_estado_disponible(self):
-        pass
+        return Disponible()
 
     def cambiar_estado_prestado(self):
-        pass
+        return Prestado()
 
     def cambiar_estado_extraviado(self):
-        pass
+        return Extraviado()
 
-    def cambiar_estado_demorado(self):
-        return False
