@@ -9,7 +9,7 @@ class Gestor:
         
         self.conexion = ConexionSingleton("biblioteca.db")
 
-    #LIBRO
+    #LIBROS ABM
 
     def agregar_libro(self, codigo, titulo, descripcion, precioReposicion):
         libro = Libro(codigo, titulo, descripcion, precioReposicion)
@@ -38,7 +38,7 @@ class Gestor:
         libro.actualizar_libro(self.conexion)
 
     
-    #SOCIOS
+    #SOCIOS ABM
 
     def agregar_socio(self, numeroSocio, nombre, apellido):
         socio = Socio(numeroSocio, nombre, apellido)
@@ -68,18 +68,21 @@ class Gestor:
 
     # REPORTES
 
+    #Reporte que indica la sumatoria del precio de reposicion de todos los libros que se encuentren en estado extraviado
     def generar_reporte_precio_extraviados(self):
         cursor = self.conexion.obtener_cursor()
         cursor.execute("SELECT SUM(precioReposicion) FROM libros WHERE id_estado = 3")
         resultados = cursor.fetchall()
         cursor.close()
 
+    #Reporque que indica en cuantos libros estan en cada uno de los tres estados posibles
     def generar_reporte_cant_librosxestado(self):
         cursor = self.conexion.obtener_cursor()
         cursor.execute("SELECT id_estado, COUNT(*) FROM libros GROUP BY id_estado")
         resultados = cursor.fetchall()
         cursor.close()
 
+    #Reporte que muestra todos los socios que solicitaron un determinado libro filtrado por su titulo
     def generar_reporte_nombre_socios_libro(self, titulo):
         cursor = self.conexion.obtener_cursor()
         cursor.execute("SELECT s.*, l.titulo from prestamo p \
@@ -91,6 +94,7 @@ class Gestor:
         resultados = cursor.fetchall()
         cursor.close()
 
+    #Reporte que muestra prestamos dado un determinado socio
     def generar_reporte_prestamos_socio(self,socio):
         cursor = self.conexion.obtener_cursor()
         cursor.execute("SELECT p.*, s.nombre, s.apellido from prestamo p \
@@ -100,6 +104,7 @@ class Gestor:
         resultados = cursor.fetchall()
         cursor.close()
 
+    #Reporte que muestra y mapea los prestamos con demora en su devolucion para mostrar en pantalla
     def generar_reporte_prestamos_demorados(self):
         cursor = self.conexion.obtener_cursor()
         cursor.execute(
@@ -111,6 +116,8 @@ class Gestor:
 
 
     #Otras funcionalidades
+
+    #Libros que no se devolvieron y ya paso la fecha pactada
     def obtener_libros_demorados(self):
         cursor = self.conexion.obtener_cursor()
         cursor.execute(
@@ -130,7 +137,9 @@ class Gestor:
         return libros
 
 
-
+    #Chequear que al solicitar un prestamo el socio no tenga mas de 3 libros prestados y de tener menos
+    #que ninguno de ellos este demorado en su devolucion
+    #No se consideran los extraviados
     def verificar_prestamo(self, socio):
 
         #Validacion de no mas de 3 libros prestados
@@ -153,6 +162,8 @@ class Gestor:
         cantidad_libros_demorados = cursor.fetchall()
 
 
+    #Esta funcionalidad se deberia ejecutar cuando en la ventana el usuario haga click en actualizar estado de libro
+    #Dados una lista de libros con mas de 30 dias de demora en la fecha de devolucion pactada
     def actualizar_libros_extraviados(self, libros):
         for libro in libros:
             libro.set_estado(3)
