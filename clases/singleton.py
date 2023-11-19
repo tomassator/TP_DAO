@@ -17,7 +17,3 @@ class ConexionSingleton:
         
     def cerrar_cursor(self):
         self.obtener_cursor().close()
-
-
-    
-

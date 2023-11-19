@@ -1,99 +1,77 @@
-from disponible import Disponible
-from prestado import Prestado
-from extraviado import Extraviado
-
+from clases.estados.disponible import Disponible
+from clases.estados.prestado import Prestado
+from clases.estados.extraviado import Extraviado
+from clases.estado import ID_DISPONIBLE, ID_EXTRAVIADO, ID_PRESTADO
 
 class Libro:
-    def __init__(self, codigo, titulo, descripcion, preciorep, id=None, estado=Disponible()):
-        self.codigo = codigo    #ISBN, codigo que identifica cada titulo       
-        self.titulo = titulo
-        self.descripcion = descripcion
-        self.precioReposicion = preciorep
-        self.id = id
-        self.estado = estado
-    
+    def __init__(self, id, codigo, titulo, descripcion, precioReposicion, estado):
+        self._id = id
+        self._codigo = codigo    # ISBN, codigo que identifica cada titulo       
+        self._titulo = titulo
+        self._descripcion = descripcion
+        self._precioReposicion = precioReposicion
+        self.set_estado(estado)
 
-    #ABM
-    def insertar_libro(self, conexion):
-        cursor = conexion.obtener_cursor()
-        cursor.execute("INSERT INTO libros (codigo, titulo, descripcion, precioReposicion, id_estado) VALUES (?, ?, ?, ?, ?)",
-                       (self.get_codigo(), self.get_titulo(), self.get_descripcion(), self.get_precioReposicion(), self.estado.get_id_estado()))
-        conexion.conexion_commit()
-        conexion.cerrar_cursor()
+    def prestar(self):
+        return self._estado.prestar()
 
-    def actualizar_libro(self,conexion):
-        cursor = conexion.obtener_cursor()
-        cursor.execute("UPDATE libros SET codigo = ?, titulo = ?, descripcion = ?,precioReposicion = ?,id_estado = ? WHERE id = ?",
-                       (self.get_codigo(), self.get_titulo(), self.get_descripcion(), self.get_precioReposicion(), self.estado.get_id_estado(), self.get_id()))
-        conexion.conexion_commit()
-        conexion.cerrar_cursor()
+    def devolver(self):
+        self._estado.devolver() 
 
-    def eliminar_libro(self,conexion):
-        cursor = conexion.obtener_cursor()
-        cursor.execute("DELETE FROM libros WHERE id = ?", (self.get_id()))
-        conexion.conexion_commit()
-        conexion.cerrar_cursor()
+    def set_estado(self, idEstado):
+        if idEstado == ID_DISPONIBLE:
+            self._estado = Disponible(self)
+        elif idEstado == ID_PRESTADO:
+            self._estado = Prestado(self)
+        elif idEstado == ID_EXTRAVIADO:
+            self._estado = Extraviado(self)
+
+    @property
+    def codigo(self):
+        return self._codigo
+
+    @codigo.setter
+    def codigo(self, codigo):
+        self._codigo = codigo
+
+    @property
+    def titulo(self):
+        return self._titulo
+
+    @titulo.setter
+    def titulo(self, titulo):
+        self._titulo = titulo
+
+    @property
+    def descripcion(self):
+        return self._descripcion
+
+    @descripcion.setter
+    def descripcion(self, descripcion):
+        self._descripcion = descripcion
+
+    @property
+    def precioReposicion(self):
+        return self._precioReposicion
+
+    @precioReposicion.setter
+    def precioReposicion(self, precioReposicion):
+        self._precioReposicion = precioReposicion
+
+    @property
+    def id(self):
+        return self._id
+
+    @id.setter
+    def id(self, id):
+        self._id = id
+
+    @property
+    def estado(self):
+        return self._estado
+
+    @estado.setter
+    def estado(self, estado):
+        self._estado = estado
 
 
-    #Definimos un metodo para cada cambio de estado
-    def cambiar_a_disponible(self):
-        if not isinstance(self.estado, Disponible):
-            pass
-        else:
-            return "El libro esta en estado Disponible"
-
-    def cambiar_a_prestado(self):
-        if not isinstance(self.estado, Prestado):
-            pass
-        else:
-            return "El libro esta en estado Prestado"
-
-    def cambiar_a_extraviado(self):
-        if not isinstance(self.estado, Extraviado):
-            pass
-        else:
-            return "El libro esta en estado Extraviado"
-
-    def cambiar_a_demorado(self):
-        if not isinstance(self.estado, Extraviado):
-            pass
-        else:
-            return "El libro esta en estado Extraviado"
-
-
-    #Getters y setters
-    def get_id(self):
-        return self.id
-
-    def set_id(self, nuevo_id):
-        self.id = nuevo_id
-        
-    def get_codigo(self):
-        return self.codigo
-
-    def set_codigo(self, nuevo_codigo):
-        self.codigo = nuevo_codigo
-
-    def get_titulo(self):
-        return self.titulo
-
-    def set_titulo(self, nuevo_titulo):
-        self.titulo = nuevo_titulo
-
-    def get_descripcion(self):
-        return self.descripcion
-
-    def set_descripcion(self, nueva_descripcion):
-        self.descripcion = nueva_descripcion
-
-    def get_precioReposicion(self):
-        return self.precioReposicion
-
-    def set_precioReposicion(self, nuevo_precio):
-        self.precioReposicion = nuevo_precio
-
-    def get_estado(self):
-        return self.estado.get_nombre()
-
-    def set_estado(self, nuevo_estado):
-        self.estado = nuevo_estado

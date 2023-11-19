@@ -1,15 +1,18 @@
+from abc import ABC, abstractmethod
 
-
-
-class Estado:
-    def cambiar_estado_disponible(self):
+class Estado(ABC):
+    @abstractmethod
+    def prestar(self):
         pass
 
-    def cambiar_estado_prestado(self):
+    @abstractmethod
+    def devolver(self):
         pass
 
-    def cambiar_estado_prestado(self):
-        pass
+# Constantes
+ID_DISPONIBLE = 1
+ID_PRESTADO = 2
+ID_EXTRAVIADO = 3
 
 
 

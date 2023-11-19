@@ -23,8 +23,7 @@ cursor.execute('''
 #Tabla Socios
 cursor.execute('''
                 CREATE TABLE IF NOT EXISTS socios (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                nro_socio INTEGER,
+                nro_socio INTEGER PRIMARY KEY AUTOINCREMENT,
                 nombre TEXT NOT NULL,
                 apellido TEXT NOT NULL)
             ''')

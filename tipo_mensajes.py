@@ -1,0 +1,8 @@
+ID_MENSAJE_EXITO = 1
+ID_MENSAJE_ERROR = 2
+
+MENSAJES = {
+    ID_MENSAJE_EXITO: "Éxito",
+    ID_MENSAJE_ERROR: "Error"
+}
+
