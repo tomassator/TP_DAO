@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 
 class Prestamo:
-    def __init__(self, id, socio, dias):
+    def __init__(self, id, socio, dias, fecha_prestamo, fecha_devolucion):
         self.id = id
         self.socio = socio
         self.tiempoPrestamo = dias
         self.detallePrestamo = [] #Listas con objetos detalle de prestamos
-        self.fecha_prestamo = datetime.now()
+        self.fecha_prestamo = fecha_prestamo
         self.fecha_pactada_devolucion = self.fecha_prestamo + timedelta(days=self.tiempoPrestamo)
-        self.fecha_devolucion = None
+        self.fecha_devolucion = fecha_devolucion
 
 
     #Registracion de prestamos y devoluciones

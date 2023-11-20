@@ -2,6 +2,7 @@ from clases.socio import Socio
 from clases.singleton import ConexionSingleton
 from clases.estado import ID_DISPONIBLE
 from clases.libro import Libro
+from clases.prestamo import Prestamo
 from datetime import datetime
 from tipo_mensajes import ID_MENSAJE_ERROR
 
@@ -158,20 +159,25 @@ class Gestor:
     def generar_reporte_precio_extraviados(self):
         cursor = self.conexion.obtener_cursor()
         cursor.execute("SELECT SUM(precioReposicion) FROM libros WHERE id_estado = 3")
-        resultados = cursor.fetchall()
+        resultados = cursor.fetchone()[0]
         cursor.close()
+        return resultados
 
     #Reporque que indica en cuantos libros estan en cada uno de los tres estados posibles
     def generar_reporte_cant_librosxestado(self):
         cursor = self.conexion.obtener_cursor()
-        cursor.execute("SELECT id_estado, COUNT(*) FROM libros GROUP BY id_estado")
+        cursor.execute("SELECT e.nombre, COUNT(*) FROM libros l \
+                       INNER JOIN estado e ON e.id = l.id_estado\
+                       GROUP BY e.nombre")
         resultados = cursor.fetchall()
         cursor.close()
+        return resultados
+
 
     #Reporte que muestra todos los socios que solicitaron un determinado libro filtrado por su titulo
     def generar_reporte_nombre_socios_libro(self, titulo):
         cursor = self.conexion.obtener_cursor()
-        cursor.execute("SELECT s.*, l.titulo from prestamo p \
+        cursor.execute("SELECT s.* from prestamo p \
                         INNER JOIN detalle_prestamo dp ON p.id = dp.id_prestamo \
                         INNER JOIN libros l ON dp.id_libro = l.id \
                         INNER JOIN socios s ON s.nro_socio = p.id_socio\
@@ -180,25 +186,46 @@ class Gestor:
         resultados = cursor.fetchall()
         cursor.close()
 
+        socios = []
+        for fila in resultados:
+            socio = Socio(fila[0], fila[1], fila[2])
+            socios.append(socio)
+        return socios
+
+
     #Reporte que muestra prestamos dado un determinado socio
     def generar_reporte_prestamos_socio(self,socio):
         cursor = self.conexion.obtener_cursor()
-        cursor.execute("SELECT p.*, s.nombre, s.apellido from prestamo p \
+        cursor.execute("SELECT p.* , s.* from prestamo p \
                        INNER JOIN socios s ON s.nro_socio = p.id_socio \
                        where id_socio = ?",(socio,))
 
         resultados = cursor.fetchall()
         cursor.close()
 
+        prestamos = []
+        for fila in resultados:
+            prestamo = Prestamo(fila[0],Socio(fila[6], fila[7], fila[8]),fila[1],fila[2],fila[4])
+            prestamos.append(prestamo)
+        return prestamos
+
     #Reporte que muestra y mapea los prestamos con demora en su devolucion para mostrar en pantalla
     def generar_reporte_prestamos_demorados(self):
+
         cursor = self.conexion.obtener_cursor()
         cursor.execute(
-            "SELECT * from prestamo \
+            "SELECT p.*,s.* from prestamo p INNER JOIN socios s ON s.nro_socio = p.id_socio \
             where julianday(?) - julianday(fecha_pactada_devolucion) > 0", (datetime.now(),))
         resultados = cursor.fetchall()
-        cursor.close()
         print(resultados)
+        cursor.close()
+
+        prestamos = []
+        for fila in resultados:
+            prestamo = Prestamo(fila[0], Socio(fila[6], fila[7], fila[8]), fila[1], datetime.strptime(fila[2], "%Y-%m-%d %H:%M:%S.%f"), fila[4])
+            prestamos.append(prestamo)
+        return prestamos
+
     
     #Otras funcionalidades
     
@@ -217,7 +244,7 @@ class Gestor:
 
         libros = []
         for fila in resultados:
-            libro = Libro(fila[1], fila[2], fila[3],fila[4], id=fila[0], estado=fila[5])
+            libro = Libro(fila[0],fila[1], fila[2], fila[3],fila[4], fila[5])
             libros.append(libro)
         return libros
     

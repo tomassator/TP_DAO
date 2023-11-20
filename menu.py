@@ -3,6 +3,7 @@ from gestor import Gestor
 from pantallas.administrar_socios import SocioManager, InterfazAdministrarSocios
 from pantallas.administrar_libros import LibroManager, InterfazAdministrarLibros
 from pantallas.registrar_prestamos import PrestamoManager, InterfazRegistrarPrestamos
+from pantallas.menu_reportes import ReportesManager,InterfazMenuReportes
 
 class Menu:
     def __init__(self, root):
@@ -59,7 +60,11 @@ class Menu:
         pass
 
     def generar_reportes(self):
-        pass
+        root_reportes = tk.Tk()
+        gestor = Gestor()
+        reporte_manager = ReportesManager(gestor)
+        interfaz_prestamos = InterfazMenuReportes(root_reportes, reporte_manager)
+        root_reportes.mainloop()
 
 if __name__ == "__main__":
     root_menu = tk.Tk()
