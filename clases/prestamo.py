@@ -1,14 +1,14 @@
 from datetime import datetime, timedelta
 
 class Prestamo:
-    def __init__(self, id, socio, dias, fecha_prestamo, fecha_devolucion):
+    def __init__(self, id, socio, dias, fecha_prestamo, fecha_devolucion, id_libro):
         self.id = id
         self.socio = socio
         self.tiempoPrestamo = dias
-        self.detallePrestamo = [] #Listas con objetos detalle de prestamos
         self.fecha_prestamo = fecha_prestamo
         self.fecha_pactada_devolucion = self.fecha_prestamo + timedelta(days=self.tiempoPrestamo)
         self.fecha_devolucion = fecha_devolucion
+        self.id_libro = id_libro
 
 
     #Registracion de prestamos y devoluciones
@@ -26,12 +26,6 @@ class Prestamo:
         conexion.commit()
         conexion.close()
 
-
-    #Cargamos todos los libros prestados al prestamo
-    def cargar_prestamo(self, detalles):
-        for det in detalles:
-            self.detallePrestamo.append(det)
-            det.set_id_prestamo(self.get_id())
 
 
     #Getters y Setters

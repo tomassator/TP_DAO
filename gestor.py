@@ -116,13 +116,8 @@ class Gestor:
 
     def registrar_prestamo(self, idLibro, nroSocio, fechaActual, tiempoPrestamo, fechaPactada):
         cursor = self.conexion.obtener_cursor()
-        cursor.execute("INSERT INTO prestamo (tiempoPrestamo, fecha_prestamo, fecha_pactada_devolucion, id_socio) VALUES (?, ?, ?, ?)",
-                       (tiempoPrestamo, fechaActual, fechaPactada, nroSocio))
-        
-        id_prestamo = cursor.lastrowid
-
-        cursor.execute("INSERT INTO detalle_prestamo (id_prestamo, id_libro) VALUES (?, ?)",
-                       (id_prestamo, idLibro))
+        cursor.execute("INSERT INTO prestamo (tiempoPrestamo, fecha_prestamo, fecha_pactada_devolucion, id_socio, id_libro) VALUES (?, ?, ?, ?,?)",
+                       (tiempoPrestamo, fechaActual, fechaPactada, nroSocio, idLibro))
 
         self.conexion.conexion_commit()
         self.conexion.cerrar_cursor()
@@ -135,18 +130,18 @@ class Gestor:
         #Validacion de no mas de 3 libros prestados
         cursor = self.conexion.obtener_cursor()
         cursor.execute(
-            "select COUNT(*) from detalle_prestamo dp \
-                INNER JOIN prestamo p ON p.id=dp.id_prestamo \
-                INNER JOIN libros l ON dp.id_libro = l.id \
+            "select COUNT(*) from prestamo p\
+                INNER JOIN libros l ON p.id_libro = l.id \
                 WHERE p.id_socio = ? AND l.id_estado = 2", [nro_socio])
         cantidad_libros = int(cursor.fetchone()[0])
+
+        print(cantidad_libros)
 
         #Validacion ningun libro demorado
 
         cursor.execute(
-            "select COUNT(*) from detalle_prestamo dp \
-                INNER JOIN prestamo p ON p.id=dp.id_prestamo \
-                INNER JOIN libros l ON dp.id_libro = l.id \
+            "select COUNT(*) from prestamo p \
+                INNER JOIN libros l ON p.id_libro = l.id \
                 WHERE l.id_estado = 2 AND  julianday(?) - julianday(p.fecha_pactada_devolucion) > 0 AND p.id_socio = ?",
             (datetime.now(),nro_socio))
         cantidad_libros_demorados = int(cursor.fetchone()[0])
@@ -177,9 +172,8 @@ class Gestor:
     #Reporte que muestra todos los socios que solicitaron un determinado libro filtrado por su titulo
     def generar_reporte_nombre_socios_libro(self, titulo):
         cursor = self.conexion.obtener_cursor()
-        cursor.execute("SELECT s.* from prestamo p \
-                        INNER JOIN detalle_prestamo dp ON p.id = dp.id_prestamo \
-                        INNER JOIN libros l ON dp.id_libro = l.id \
+        cursor.execute("SELECT DISTINCT s.nro_socio, s.nombre, s.apellido from prestamo p \
+                        INNER JOIN libros l ON p.id_libro = l.id \
                         INNER JOIN socios s ON s.nro_socio = p.id_socio\
                         where titulo = ?",
                        (titulo,))  # Cambiar el 4334 por el titulo del libro que viene como dato de la interfaz
@@ -201,11 +195,13 @@ class Gestor:
                        where id_socio = ?",(socio,))
 
         resultados = cursor.fetchall()
+
         cursor.close()
 
         prestamos = []
         for fila in resultados:
-            prestamo = Prestamo(fila[0],Socio(fila[6], fila[7], fila[8]),fila[1],fila[2],fila[4])
+            prestamo = Prestamo(fila[0],Socio(fila[7], fila[8], fila[9]),fila[1],datetime.strptime(fila[2], "%Y-%m-%d %H:%M:%S.%f"),fila[4],fila[6])
+
             prestamos.append(prestamo)
         return prestamos
 
@@ -222,7 +218,7 @@ class Gestor:
 
         prestamos = []
         for fila in resultados:
-            prestamo = Prestamo(fila[0], Socio(fila[6], fila[7], fila[8]), fila[1], datetime.strptime(fila[2], "%Y-%m-%d %H:%M:%S.%f"), fila[4])
+            prestamo = Prestamo(fila[0], Socio(fila[7], fila[8], fila[9]), fila[1], datetime.strptime(fila[2], "%Y-%m-%d %H:%M:%S.%f"), fila[4], fila[6])
             prestamos.append(prestamo)
         return prestamos
 
@@ -233,14 +229,12 @@ class Gestor:
     def obtener_libros_demorados(self):
         cursor = self.conexion.obtener_cursor()
         cursor.execute(
-            "select l.* from detalle_prestamo dp \
-                INNER JOIN prestamo p ON p.id=dp.id_prestamo \
-                INNER JOIN libro l ON dp.id_libros = l.id \
+            "select l.* from prestamo p \
+                INNER JOIN libro l ON p.id_libros = l.id \
                 WHERE l.id_estado = 2 AND  julianday(?) - julianday(p.fecha_pactada_devolucion) > 0", (datetime.now(),))
         resultados = cursor.fetchall()
         cursor.close()
 
-        print(resultados)
 
         libros = []
         for fila in resultados:
