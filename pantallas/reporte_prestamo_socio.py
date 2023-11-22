@@ -47,4 +47,4 @@ class InterfazPrestamoSocio:
 
         # Cargar socios en la grilla
         for i, prestamo in enumerate(self.reporte_manager.obtener_prestamos(self.socio_entry.get())):
-            self.prestamos_treeview.insert("", i, values=(prestamo.id, prestamo.tiempoPrestamo, prestamo.fecha_prestamo, prestamo.fecha_pactada_devolucion, prestamo.fecha_devolucion))
+            self.prestamos_treeview.insert("", i, values=(prestamo.id, prestamo.tiempoPrestamo, prestamo.fechaPrestamo, prestamo.fechaPactadaDevolucion, prestamo.fechaDevolucion))

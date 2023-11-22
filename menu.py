@@ -4,6 +4,7 @@ from pantallas.administrar_socios import SocioManager, InterfazAdministrarSocios
 from pantallas.administrar_libros import LibroManager, InterfazAdministrarLibros
 from pantallas.registrar_prestamos import PrestamoManager, InterfazRegistrarPrestamos
 from pantallas.menu_reportes import ReportesManager,InterfazMenuReportes
+from pantallas.registrar_devoluciones import DevolucionManager, InterfazRegistrarDevoluciones
 
 class Menu:
     def __init__(self, root):
@@ -26,12 +27,14 @@ class Menu:
         btn_socios = tk.Button(root, text="Administración de socios", command=self.administracion_socios)
         btn_libros = tk.Button(root, text="Administración de libros", command=self.administracion_libros)
         btn_prestamos = tk.Button(root, text="Registro de préstamos", command=self.registro_prestamos)
+        btn_devoluciones = tk.Button(root, text="Registro de devoluciones", command=self.registro_devoluciones)
         btn_extraviados = tk.Button(root, text="Registro de libros extraviados", command=self.registro_libros_extraviados)
         btn_reportes = tk.Button(root, text="Generar reportes", command=self.generar_reportes)
 
         btn_socios.pack(pady=10)
         btn_libros.pack(pady=10)
         btn_prestamos.pack(pady=10)
+        btn_devoluciones.pack(pady=10)
         btn_extraviados.pack(pady=10)
         btn_reportes.pack(pady=10)
 
@@ -55,6 +58,13 @@ class Menu:
         prestamo_manager = PrestamoManager(gestor)
         interfaz_prestamos = InterfazRegistrarPrestamos(root_prestamo, prestamo_manager)
         root_prestamo.mainloop()
+
+    def registro_devoluciones(self):
+        root_devolucion = tk.Tk()
+        gestor = Gestor()
+        devolucion_manager = DevolucionManager(gestor)
+        interfaz_devoluciones = InterfazRegistrarDevoluciones(root_devolucion, devolucion_manager)
+        root_devolucion.mainloop()
         
     def registro_libros_extraviados(self):
         pass

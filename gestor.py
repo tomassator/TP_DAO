@@ -4,7 +4,7 @@ from clases.estado import ID_DISPONIBLE
 from clases.libro import Libro
 from clases.prestamo import Prestamo
 from datetime import datetime
-from tipo_mensajes import ID_MENSAJE_ERROR
+from tipo_mensajes import ID_MENSAJE_ERROR, ID_MENSAJE_EXITO
 
 class Gestor:
     def __init__(self):
@@ -28,6 +28,13 @@ class Gestor:
             socio = Socio(fila[0], fila[1], fila[2])
             socios.append(socio)
         return socios
+    
+    def obtener_socio(self, nroSocio):
+        cursor = self.conexion.obtener_cursor()
+        cursor.execute("SELECT * FROM socios WHERE nro_socio = ?", [nroSocio])
+        fila = cursor.fetchone()
+        self.conexion.cerrar_cursor()
+        return Socio(fila[0], fila[1], fila[2])
     
     def eliminar_socio(self, nro_socio):
         cursor = self.conexion.obtener_cursor()
@@ -105,11 +112,40 @@ class Gestor:
     
     # Prestamos
 
-    def prestar_libro(self, idLibro, nro_socio):
-        if self.verificar_prestamo(nro_socio):
+    def obtener_prestamo(self, idPrestamo):
+        cursor = self.conexion.obtener_cursor()
+        cursor.execute(f"SELECT * FROM prestamo WHERE id = {idPrestamo}")
+        resultado = cursor.fetchone()
+
+        socio = self.obtener_socio(resultado[5])
+        libro = self.obtener_libro(resultado[6])
+        prestamo = Prestamo(resultado[0], socio,resultado[1],resultado[2],resultado[3],resultado[4], libro)
+
+        self.conexion.cerrar_cursor()
+        return prestamo     
+    
+    def obtener_prestamos_activos(self):
+        cursor = self.conexion.obtener_cursor()
+        cursor.execute("SELECT * FROM prestamo WHERE fecha_devolucion IS NULL")
+        resultados = cursor.fetchall()
+
+        prestamos = []
+        for fila in resultados:
+            socio = self.obtener_socio(fila[5])
+            libro = self.obtener_libro(fila[6])
+            prestamo = Prestamo(fila[0], socio,fila[1],fila[2],fila[3],fila[4], libro)
+            prestamos.append(prestamo)
+        self.conexion.cerrar_cursor()
+        return prestamos        
+
+    def prestar_libro(self, idLibro, nroSocio, tiempoPrestamo, fechaPactada):
+        if self.verificar_prestamo(nroSocio):
             libro = self.obtener_libro(idLibro)
             tipoMensaje, mensaje = libro.prestar()
-            self.actualizar_estado_libro(idLibro, libro.estado.id)
+
+            if (tipoMensaje == ID_MENSAJE_EXITO):
+                self.actualizar_estado_libro(idLibro, libro.estado.id)
+                self.registrar_prestamo(idLibro, nroSocio, datetime.now(), tiempoPrestamo, fechaPactada)
         else:
             tipoMensaje, mensaje = ID_MENSAJE_ERROR, "No se puede registrar un prestamo para este socio."
         return tipoMensaje, mensaje
@@ -146,7 +182,27 @@ class Gestor:
             (datetime.now(),nro_socio))
         cantidad_libros_demorados = int(cursor.fetchone()[0])
 
-        return cantidad_libros <= 3 and cantidad_libros_demorados == 0
+        return cantidad_libros < 3 and cantidad_libros_demorados == 0
+    
+    def actualizar_fecha_devolucion_prestamo(self, idPrestamo):
+        cursor = self.conexion.obtener_cursor()
+        fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
+        cursor.execute(f"UPDATE prestamo SET fecha_devolucion = '{fecha_actual}' WHERE id = {idPrestamo}")
+        self.conexion.conexion_commit()
+        self.conexion.cerrar_cursor()
+    
+    #Devoluciones
+
+    def devolver_libro(self, idPrestamo):
+        libro = self.obtener_prestamo(idPrestamo).libro
+        tipoMensaje, mensaje = libro.devolver()
+
+        if tipoMensaje == ID_MENSAJE_EXITO:
+            self.actualizar_estado_libro(libro.id, libro.estado.id)
+            self.actualizar_fecha_devolucion_prestamo(idPrestamo)
+        
+        return tipoMensaje, mensaje
+
     
     #Reportes
 
@@ -200,7 +256,7 @@ class Gestor:
 
         prestamos = []
         for fila in resultados:
-            prestamo = Prestamo(fila[0],Socio(fila[7], fila[8], fila[9]),fila[1],datetime.strptime(fila[2], "%Y-%m-%d %H:%M:%S.%f"),fila[4],fila[6])
+            prestamo = Prestamo(fila[0],Socio(fila[7], fila[8], fila[9]),fila[1],datetime.strptime(fila[2], "%Y-%m-%d %H:%M:%S.%f"),fila[3],fila[4],fila[6])
 
             prestamos.append(prestamo)
         return prestamos

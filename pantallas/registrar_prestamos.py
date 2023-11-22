@@ -15,10 +15,7 @@ class PrestamoManager:
         return self.gestor.obtener_libros_disponibles()
     
     def registrar_prestamo(self, idLibro, nroSocio, tiempoPrestamo, fechaPactada):
-        tipoMensaje, mensaje = self.gestor.prestar_libro(idLibro, nroSocio)
-        if tipoMensaje == ID_MENSAJE_EXITO:
-            self.gestor.registrar_prestamo(idLibro, nroSocio, self.fecha_actual, tiempoPrestamo, fechaPactada)
-        return tipoMensaje, mensaje
+        return self.gestor.prestar_libro(idLibro, nroSocio, tiempoPrestamo, fechaPactada)
         
     
 class InterfazRegistrarPrestamos:

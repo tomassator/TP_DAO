@@ -1,6 +1,5 @@
 from clases.estado import Estado, ID_DISPONIBLE
 from tipo_mensajes import ID_MENSAJE_EXITO
-from clases.estados.prestado import Prestado
 
 class Disponible(Estado):
     
@@ -10,6 +9,7 @@ class Disponible(Estado):
         self._libro = libro
 
     def prestar(self):
+        from clases.estados.prestado import Prestado
         self._libro.estado = Prestado(self._libro)
         return ID_MENSAJE_EXITO, "Préstamo registrado correctamente."
 
