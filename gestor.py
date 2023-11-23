@@ -184,22 +184,22 @@ class Gestor:
 
         return cantidad_libros < 3 and cantidad_libros_demorados == 0
     
-    def actualizar_fecha_devolucion_prestamo(self, idPrestamo):
+    def actualizar_fecha_devolucion_prestamo(self, idPrestamo, fechaDevolucion):
         cursor = self.conexion.obtener_cursor()
-        fecha_actual = datetime.now().strftime("%Y-%m-%d %H:%M:%S") 
-        cursor.execute(f"UPDATE prestamo SET fecha_devolucion = '{fecha_actual}' WHERE id = {idPrestamo}")
+        fechaDevolucion = fechaDevolucion.strftime("%Y-%m-%d %H:%M:%S") 
+        cursor.execute(f"UPDATE prestamo SET fecha_devolucion = '{fechaDevolucion}' WHERE id = {idPrestamo}")
         self.conexion.conexion_commit()
         self.conexion.cerrar_cursor()
     
     #Devoluciones
 
-    def devolver_libro(self, idPrestamo):
+    def devolver_libro(self, idPrestamo, fechaDevolucion):
         libro = self.obtener_prestamo(idPrestamo).libro
         tipoMensaje, mensaje = libro.devolver()
 
         if tipoMensaje == ID_MENSAJE_EXITO:
             self.actualizar_estado_libro(libro.id, libro.estado.id)
-            self.actualizar_fecha_devolucion_prestamo(idPrestamo)
+            self.actualizar_fecha_devolucion_prestamo(idPrestamo, fechaDevolucion)
         
         return tipoMensaje, mensaje
 

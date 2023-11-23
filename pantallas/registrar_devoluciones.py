@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from tkcalendar import DateEntry
 from datetime import datetime, timedelta
 from tipo_mensajes import ID_MENSAJE_ERROR, ID_MENSAJE_EXITO
 
@@ -11,8 +12,8 @@ class DevolucionManager:
     def obtener_prestamos_activos(self):
         return self.gestor.obtener_prestamos_activos()
 
-    def registrar_devolucion(self, idPrestamo):
-        tipoMensaje, mensaje = self.gestor.devolver_libro(idPrestamo)
+    def registrar_devolucion(self, idPrestamo, fechaDevolucion):
+        tipoMensaje, mensaje = self.gestor.devolver_libro(idPrestamo, fechaDevolucion)
         return tipoMensaje, mensaje
 
 class InterfazRegistrarDevoluciones:
@@ -29,13 +30,8 @@ class InterfazRegistrarDevoluciones:
         # Elementos en el input_frame
         self.fecha_devolucion_label = tk.Label(self.input_frame, text="Fecha de devolución:")
         self.fecha_devolucion_label.grid(row=0, column=0, padx=10, pady=5)
-        self.fecha_devolucion_entry = tk.Entry(self.input_frame)
+        self.fecha_devolucion_entry = DateEntry(self.input_frame, selectmode='day', date_pattern='dd/mm/yy')
         self.fecha_devolucion_entry.grid(row=0, column=1, padx=10, pady=5)
-
-        # Obtener la fecha actual
-        fecha_actual = devolucion_manager.fecha_actual.strftime("%d/%m/%Y")
-        self.fecha_devolucion_entry.insert(0, fecha_actual)
-        self.fecha_devolucion_entry.config(state=tk.DISABLED)
 
         self.registrar_devolucion_button = tk.Button(self.input_frame, text="Registrar devolución", command=self.registrar_devolucion)
         self.registrar_devolucion_button.grid(row=1, column=0, columnspan=2, pady=10)
@@ -68,9 +64,10 @@ class InterfazRegistrarDevoluciones:
         if item:
             prestamo_seleccionado = self.devoluciones_treeview.item(item[0], "values")
             idPrestamo = prestamo_seleccionado[0]
+            fechaDevolucion = self.fecha_devolucion_entry.get_date()
 
-            if idPrestamo:
-                tipoMensaje, mensaje = self.devolucion_manager.registrar_devolucion(idPrestamo)
+            if idPrestamo and fechaDevolucion:
+                tipoMensaje, mensaje = self.devolucion_manager.registrar_devolucion(idPrestamo, fechaDevolucion)
                 if tipoMensaje == ID_MENSAJE_EXITO:
                     messagebox.showinfo("Éxito", mensaje)
                 else:
