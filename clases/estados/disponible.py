@@ -1,5 +1,5 @@
 from clases.estado import Estado, ID_DISPONIBLE
-from tipo_mensajes import ID_MENSAJE_EXITO
+from tipo_mensajes import ID_MENSAJE_ERROR, ID_MENSAJE_EXITO
 
 class Disponible(Estado):
     
@@ -14,7 +14,10 @@ class Disponible(Estado):
         return ID_MENSAJE_EXITO, "Préstamo registrado correctamente."
 
     def devolver(self):
-        pass
+        return ID_MENSAJE_ERROR, "No se puede devolver un libro disponible."
+
+    def extraviado(self):
+        return ID_MENSAJE_ERROR, "No se puede registrar como extraviado un libro disponible."
 
     @property
     def libro(self):

@@ -1,6 +1,7 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
 from datetime import datetime, timedelta
+from tkcalendar import DateEntry
 from tipo_mensajes import ID_MENSAJE_ERROR, ID_MENSAJE_EXITO
 
 class PrestamoManager:
@@ -44,7 +45,7 @@ class InterfazRegistrarPrestamos:
 
         self.fecha_pactada_label = tk.Label(self.input_frame, text="Fecha pactada:")
         self.fecha_pactada_label.grid(row=2, column=0, padx=10, pady=5)
-        self.fecha_pactada_entry = tk.Entry(self.input_frame, state=tk.DISABLED)  # Deshabilitar la edición
+        self.fecha_pactada_entry = DateEntry(self.input_frame, selectmode='day', date_pattern='dd/mm/yy')
         self.fecha_pactada_entry.grid(row=2, column=1, padx=10, pady=5)
 
         self.prestamo_button = tk.Button(self.input_frame, text="Registrar préstamo", command=self.registrar_prestamo)
@@ -52,6 +53,7 @@ class InterfazRegistrarPrestamos:
 
         # Actualizacion dinamica de la fecha
         self.dias_entry.bind("<KeyRelease>", self.actualizar_fecha_pactada)
+        self.fecha_pactada_entry.bind("<<DateEntrySelected>>", self.actualizar_tiempo_prestamo)
 
         #Frame para la grilla
         self.libros_treeview = ttk.Treeview(self.root, columns=("ID", "Codigo", "Titulo", "Descripcion"), show="headings")
@@ -112,11 +114,16 @@ class InterfazRegistrarPrestamos:
         self.fecha_pactada_entry.config(state=tk.NORMAL) 
         self.fecha_pactada_entry.delete(0, tk.END)
         self.fecha_pactada_entry.insert(0, fecha_pactada.strftime("%d/%m/%Y"))
-        self.fecha_pactada_entry.config(state=tk.DISABLED)
+
+    def actualizar_tiempo_prestamo(self, event):
+
+        tiempoPrestamo = (self.fecha_pactada_entry.get_date() - self.prestamo_manager.fecha_actual.date()).days
+
+        self.dias_entry.delete(0, tk.END)
+        self.dias_entry.insert(0, tiempoPrestamo)
 
     def limpiar_campos(self):
         self.socio_combobox.set("")
         self.dias_entry.delete(0, tk.END)
         self.fecha_pactada_entry.config(state=tk.NORMAL)
         self.fecha_pactada_entry.delete(0, tk.END)
-        self.fecha_pactada_entry.config(state=tk.DISABLED)

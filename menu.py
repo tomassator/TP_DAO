@@ -5,6 +5,7 @@ from pantallas.administrar_libros import LibroManager, InterfazAdministrarLibros
 from pantallas.registrar_prestamos import PrestamoManager, InterfazRegistrarPrestamos
 from pantallas.menu_reportes import ReportesManager,InterfazMenuReportes
 from pantallas.registrar_devoluciones import DevolucionManager, InterfazRegistrarDevoluciones
+from pantallas.registrar_libros_extraviados import ExtravioManager, InterfazRegistrarExtravios
 
 class Menu:
     def __init__(self, root):
@@ -67,7 +68,11 @@ class Menu:
         root_devolucion.mainloop()
         
     def registro_libros_extraviados(self):
-        pass
+        root_extravio = tk.Tk()
+        gestor = Gestor()
+        extravio_manager = ExtravioManager(gestor)
+        interfaz_extravios = InterfazRegistrarExtravios(root_extravio, extravio_manager)
+        root_extravio.mainloop()
 
     def generar_reportes(self):
         root_reportes = tk.Tk()

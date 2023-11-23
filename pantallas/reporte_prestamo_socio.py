@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from datetime import datetime
 
 
 class ReportesPrestamoSocioManager:
@@ -47,4 +48,4 @@ class InterfazPrestamoSocio:
 
         # Cargar socios en la grilla
         for i, prestamo in enumerate(self.reporte_manager.obtener_prestamos(self.socio_entry.get())):
-            self.prestamos_treeview.insert("", i, values=(prestamo.id, prestamo.tiempoPrestamo, prestamo.fechaPrestamo, prestamo.fechaPactadaDevolucion, prestamo.fechaDevolucion))
+            self.prestamos_treeview.insert("", i, values=(prestamo.id, prestamo.tiempoPrestamo, prestamo.fechaPrestamo.strftime("%d/%m/%Y"), datetime.strptime(prestamo.fechaPactadaDevolucion, "%Y-%m-%d %H:%M:%S.%f").strftime("%d/%m/%Y"), datetime.strptime(prestamo.fechaDevolucion, "%Y-%m-%d %H:%M:%S").strftime("%d/%m/%Y") if prestamo.fechaDevolucion != None else "-"))

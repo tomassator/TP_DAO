@@ -9,6 +9,10 @@ class Estado(ABC):
     def devolver(self):
         pass
 
+    @abstractmethod
+    def extraviado(self):
+        pass
+
 # Constantes
 ID_DISPONIBLE = 1
 ID_PRESTADO = 2

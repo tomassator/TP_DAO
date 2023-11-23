@@ -1,17 +1,21 @@
-from clases.estado import Estado
+from clases.estado import Estado, ID_EXTRAVIADO
+from tipo_mensajes import ID_MENSAJE_ERROR
 
 class Extraviado(Estado):
     
     def __init__(self, libro):
-        self._id = 3
+        self._id = ID_EXTRAVIADO
         self._nombre = "EXTRAVIADO"
         self._libro = libro
 
     def prestar(self):
-        pass
+        return ID_MENSAJE_ERROR, "No se puede prestar un libro extraviado."
 
     def devolver(self):
-        pass
+        return ID_MENSAJE_ERROR, "No se puede devolver un libro extraviado."
+
+    def extraviado(self):
+        return ID_MENSAJE_ERROR, "El libro ya se encuentra extraviado"
 
     @property
     def libro(self):

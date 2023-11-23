@@ -17,6 +17,9 @@ class Libro:
 
     def devolver(self):
         return self._estado.devolver() 
+    
+    def extraviado(self):
+        return self._estado.extraviado()
 
     def set_estado(self, idEstado):
         if idEstado == ID_DISPONIBLE:

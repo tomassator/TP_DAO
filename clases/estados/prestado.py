@@ -1,6 +1,6 @@
 from clases.estado import Estado
 from clases.estado import Estado, ID_PRESTADO
-from tipo_mensajes import ID_MENSAJE_EXITO
+from tipo_mensajes import ID_MENSAJE_ERROR, ID_MENSAJE_EXITO
 
 class Prestado(Estado):
     
@@ -10,12 +10,17 @@ class Prestado(Estado):
         self._libro = libro
 
     def prestar(self):
-        pass
+        return ID_MENSAJE_ERROR, "No se puede prestar un libro ya prestado."
 
     def devolver(self):
         from clases.estados.disponible import Disponible
         self._libro.estado = Disponible(self._libro)
         return ID_MENSAJE_EXITO, "Devolución registrada correctamente."
+    
+    def extraviado(self):
+        from clases.estados.extraviado import Extraviado
+        self._libro.estado = Extraviado(self._libro)
+        return ID_MENSAJE_EXITO, "Extravío registrado correctamente."
 
     @property
     def libro(self):

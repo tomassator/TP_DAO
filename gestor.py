@@ -1,6 +1,6 @@
 from clases.socio import Socio
 from clases.singleton import ConexionSingleton
-from clases.estado import ID_DISPONIBLE
+from clases.estado import ID_DISPONIBLE, ID_PRESTADO
 from clases.libro import Libro
 from clases.prestamo import Prestamo
 from datetime import datetime
@@ -126,7 +126,8 @@ class Gestor:
     
     def obtener_prestamos_activos(self):
         cursor = self.conexion.obtener_cursor()
-        cursor.execute("SELECT * FROM prestamo WHERE fecha_devolucion IS NULL")
+        cursor.execute(f"SELECT * FROM prestamo p INNER JOIN libros l ON p.id_libro = l.id \
+                       WHERE fecha_devolucion IS NULL and l.id_estado = {ID_PRESTADO}")
         resultados = cursor.fetchall()
 
         prestamos = []
@@ -170,9 +171,6 @@ class Gestor:
                 INNER JOIN libros l ON p.id_libro = l.id \
                 WHERE p.id_socio = ? AND l.id_estado = 2", [nro_socio])
         cantidad_libros = int(cursor.fetchone()[0])
-
-        print(cantidad_libros)
-
         #Validacion ningun libro demorado
 
         cursor.execute(
@@ -202,8 +200,21 @@ class Gestor:
             self.actualizar_fecha_devolucion_prestamo(idPrestamo, fechaDevolucion)
         
         return tipoMensaje, mensaje
-
     
+    # Extravio
+
+    def registrar_extravio(self, libros):
+        mensajePantalla = None
+        for idLibro in libros:
+            libro = self.obtener_libro(idLibro)
+            tipoMensaje, mensaje = libro.extraviado()
+
+            if tipoMensaje == ID_MENSAJE_EXITO:
+                mensajePantalla =  mensaje
+                self.actualizar_estado_libro(libro.id, libro.estado.id)
+
+        return ID_MENSAJE_EXITO, mensajePantalla
+            
     #Reportes
 
     #Reporte que indica la sumatoria del precio de reposicion de todos los libros que se encuentren en estado extraviado
@@ -267,14 +278,14 @@ class Gestor:
         cursor = self.conexion.obtener_cursor()
         cursor.execute(
             "SELECT p.*,s.* from prestamo p INNER JOIN socios s ON s.nro_socio = p.id_socio \
-            where julianday(?) - julianday(fecha_pactada_devolucion) > 0", (datetime.now(),))
+            where julianday(date('now')) - julianday(fecha_pactada_devolucion) > 0")
         resultados = cursor.fetchall()
         print(resultados)
         cursor.close()
 
         prestamos = []
         for fila in resultados:
-            prestamo = Prestamo(fila[0], Socio(fila[7], fila[8], fila[9]), fila[1], datetime.strptime(fila[2], "%Y-%m-%d %H:%M:%S.%f"), fila[4], fila[6])
+            prestamo = Prestamo(fila[0], Socio(fila[7], fila[8], fila[9]), fila[1], datetime.strptime(fila[2], "%Y-%m-%d %H:%M:%S.%f"), fila[3],fila[4], fila[6])
             prestamos.append(prestamo)
         return prestamos
 
@@ -282,21 +293,20 @@ class Gestor:
     #Otras funcionalidades
     
     #Libros que no se devolvieron y ya paso la fecha pactada
-    def obtener_libros_demorados(self):
+    def obtener_prestamos_demorados(self):
         cursor = self.conexion.obtener_cursor()
         cursor.execute(
-            "select l.* from prestamo p \
-                INNER JOIN libro l ON p.id_libros = l.id \
-                WHERE l.id_estado = 2 AND  julianday(?) - julianday(p.fecha_pactada_devolucion) > 0", (datetime.now(),))
+            "select l.*, p.* from prestamo p \
+                INNER JOIN libros l ON p.id_libro = l.id \
+                WHERE l.id_estado = 2 AND  julianday(date('now')) - julianday(p.fecha_pactada_devolucion) > 30")
         resultados = cursor.fetchall()
         cursor.close()
 
-
-        libros = []
+        prestamos = []
         for fila in resultados:
-            libro = Libro(fila[0],fila[1], fila[2], fila[3],fila[4], fila[5])
-            libros.append(libro)
-        return libros
+            prestamo = Prestamo(fila[6],fila[11],fila[7],fila[8],fila[9],fila[10],Libro(fila[12],fila[1],fila[2],fila[3],fila[4],fila[5]))
+            prestamos.append(prestamo)
+        return prestamos
     
     #Esta funcionalidad se deberia ejecutar cuando en la ventana el usuario haga click en actualizar estado de libro
     #Dados una lista de libros con mas de 30 dias de demora en la fecha de devolucion pactada
