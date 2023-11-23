@@ -42,6 +42,7 @@ class InterfazRegistrarPrestamos:
         self.dias_label.grid(row=1, column=0, padx=10, pady=5)
         self.dias_entry = tk.Entry(self.input_frame)
         self.dias_entry.grid(row=1, column=1, padx=10, pady=5)
+        self.dias_entry.insert(0, 0)
 
         self.fecha_pactada_label = tk.Label(self.input_frame, text="Fecha pactada:")
         self.fecha_pactada_label.grid(row=2, column=0, padx=10, pady=5)

@@ -1,5 +1,6 @@
 import tkinter as tk
 from tkinter import ttk, messagebox
+from tipo_mensajes import ID_MENSAJE_EXITO
 
 class SocioManager:
     def __init__(self, gestor):
@@ -9,8 +10,8 @@ class SocioManager:
         self.gestor.agregar_socio(nombre, apellido)
 
     def eliminar_socio(self, nro_socio):
-        self.gestor.eliminar_socio(nro_socio)
-    
+        return self.gestor.eliminar_socio(nro_socio)
+        
     def actualizar_socio(self, nro_socio, nombre, apellido):
         self.gestor.actualizar_socio(nro_socio, nombre, apellido)
     
@@ -77,11 +78,14 @@ class InterfazAdministrarSocios:
     def eliminar_socio(self):
         if self.socio_seleccionado:
             nro_socio = self.socio_seleccionado[0]
-            self.socio_manager.eliminar_socio(nro_socio)
-
-            self.cargar_socios_en_grilla()
-            messagebox.showinfo("Éxito", "Socio eliminado correctamente.")
-            self.limpiar_campos()
+            tipo_mensaje, mensaje = self.socio_manager.eliminar_socio(nro_socio)
+            if tipo_mensaje == ID_MENSAJE_EXITO:
+                self.cargar_socios_en_grilla()
+                self.limpiar_campos()
+                return messagebox.showinfo("Éxito", mensaje)
+            else:
+                return messagebox.showerror("Error", mensaje)
+            
         else:
             messagebox.showerror("Error", "No se ha seleccionado un socio.")
 

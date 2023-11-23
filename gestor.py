@@ -38,9 +38,14 @@ class Gestor:
     
     def eliminar_socio(self, nro_socio):
         cursor = self.conexion.obtener_cursor()
+        for prestamo in self.obtener_prestamos_activos():
+            if int(prestamo.socio.nroSocio) == int(nro_socio):
+                return ID_MENSAJE_ERROR, "No se puede eliminar socio. Posee prestamos activos"
+
         cursor.execute("DELETE FROM socios WHERE nro_socio = ?", [nro_socio])
         self.conexion.conexion_commit()
         self.conexion.cerrar_cursor()
+        return ID_MENSAJE_EXITO, "Socio eliminado correctamente."
 
     def actualizar_socio(self, nro_socio, nombre, apellido):
         cursor = self.conexion.obtener_cursor()
